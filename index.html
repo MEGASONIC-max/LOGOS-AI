@@ -3,190 +3,69 @@
 
 <head>
 
-  <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>ZEUS AI</title>
+<title>ZEUS AI</title>
 
-  <!-- CSS -->
-
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
-
-  <!-- FONT -->
-
-  <link
-    rel="preconnect"
-    href="https://fonts.googleapis.com"
-  >
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet"
-  >
+<link rel="stylesheet" href="style.css">
 
 </head>
 
 <body>
 
-  <!-- NAVBAR -->
+<header>
+    ZEUS AI
+</header>
 
-  <nav class="navbar">
+<div id="chat-box">
 
-    <div class="logo">
+    <div class="welcome">
 
-      ▲ ZEUS AI
+        <h1>ZEUS AI</h1>
+
+        <p>
+            Smart AI Assistant powered by Llama 3
+        </p>
+
+        <div class="contact-owner">
+
+            <h3>Contact Owner</h3>
+
+            <a href="https://wa.me/2349066760078" target="_blank">
+                WhatsApp 1: +234 906 676 0078
+            </a>
+
+            <a href="https://wa.me/2348062285862" target="_blank">
+                WhatsApp 2: +234 806 228 5862
+            </a>
+
+            <a href="mailto:ge5853987@gmail.com">
+                Email: ge5853987@gmail.com
+            </a>
+
+        </div>
 
     </div>
 
-    <button class="nav-btn">
+</div>
 
-      Ask AI
+<div class="input-area">
 
+    <input 
+        type="text" 
+        id="user-input" 
+        placeholder="Message ZEUS AI..."
+    >
+
+    <button id="send-btn">
+        Send
     </button>
 
-  </nav>
+</div>
 
-  <!-- HERO -->
-
-  <section class="hero">
-
-    <h1>
-
-      Chatbot
-
-    </h1>
-
-    <p>
-
-      ZEUS AI is a futuristic smart assistant
-      designed for fast, intelligent and
-      human-like conversations.
-
-    </p>
-
-    <div class="hero-buttons">
-
-      <button class="primary-btn">
-
-        Get Started
-
-      </button>
-
-      <button class="secondary-btn">
-
-        Try It Out
-
-      </button>
-
-    </div>
-
-  </section>
-
-  <!-- CHAT SECTION -->
-
-  <section class="chat-section">
-
-    <h2>
-
-      Give it a try
-
-    </h2>
-
-    <p>
-
-      Enter a message in the prompt
-      input and see ZEUS AI respond.
-
-    </p>
-
-    <!-- CHAT BOX -->
-
-    <div class="chat-box">
-
-      <!-- TOP TEXT -->
-
-      <div class="chat-top">
-
-        ✨ How can I assist you today?
-
-      </div>
-
-      <!-- MESSAGES -->
-
-      <div id="messages">
-
-      </div>
-
-      <!-- INPUT -->
-
-      <div class="input-area">
-
-        <input
-          type="text"
-          id="user-input"
-          placeholder="Type your message..."
-        >
-
-        <button onclick="sendMessage()">
-
-          ↑
-
-        </button>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  <!-- FOOTER -->
-
-  <footer class="footer">
-
-    <h3>
-
-      ZEUS AI
-
-    </h3>
-
-    <p>
-
-      Smart AI assistant built for fast,
-      intelligent and human-like conversations.
-
-    </p>
-
-    <p>
-
-      Owner:
-      <span class="owner-number">
-
-        +2349066760078
-
-      </span>
-
-    </p>
-
-    <p>
-
-      © 2026 ZEUS AI.
-      All Rights Reserved.
-
-    </p>
-
-  </footer>
-
-  <!-- SCRIPT -->
-
-  <script src="script.js"></script>
+<script src="script.js"></script>
 
 </body>
-
 </html>
