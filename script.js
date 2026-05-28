@@ -1,271 +1,113 @@
-```javascript id="v5wyec"
-function sendMessage(){
+const OPENAI_API_KEY = "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";
 
-  const input = document.getElementById("user-input");
-  const messages = document.getElementById("messages");
+async function sendMessage(){
 
-  const text = input.value;
+  const input =
+  document.getElementById("user-input");
 
-  const lowerText = text.toLowerCase();
+  const messages =
+  document.getElementById("messages");
 
-  if(text.trim() === ""){
+  const text = input.value.trim();
+
+  if(text === ""){
     return;
   }
 
-  // USER MESSAGE
+  // SHOW USER MESSAGE
 
-  const userMessage = document.createElement("div");
+  const userDiv =
+  document.createElement("div");
 
-  userMessage.className = "message";
+  userDiv.className = "message";
 
-  userMessage.innerHTML =     <strong>You:</strong><br><br>     ${text}  ;
+  userDiv.innerHTML = `
+    <strong>You:</strong><br><br>
+    ${text}
+  `;
 
-  messages.appendChild(userMessage);
+  messages.appendChild(userDiv);
+
+  // CLEAR INPUT
 
   input.value = "";
 
-  messages.scrollTop = messages.scrollHeight;
+  // BOT THINKING
 
-  // BOT TYPING
+  const botDiv =
+  document.createElement("div");
 
-  const botMessage = document.createElement("div");
+  botDiv.className = "message";
 
-  botMessage.className = "message";
-
-  botMessage.innerHTML = `
+  botDiv.innerHTML = `
     <strong>ZEUS AI:</strong><br><br>
-    Typing...
+    Thinking...
   `;
 
-  messages.appendChild(botMessage);
+  messages.appendChild(botDiv);
 
-  messages.scrollTop = messages.scrollHeight;
+  try{
 
-  // BOT REPLY
+    const response = await fetch(
 
-  setTimeout(() => {
+      "https://api.openai.com/v1/chat/completions",
 
-    let reply = "";
+      {
 
-    // Greetings
+        method:"POST",
 
-    if(
-      lowerText.includes("hi") ||
-      lowerText.includes("hello") ||
-      lowerText.includes("hey")
-    ){
+        headers:{
+          "Content-Type":"application/json",
+          "Authorization":
+          `Bearer ${OPENAI_API_KEY}`
+        },
 
-      reply = "Hello 👋 Welcome to ZEUS AI.";
+        body:JSON.stringify({
 
-    }
+          model:"gpt-3.5-turbo",
 
-    // How are you
+          messages:[
 
-    else if(
-      lowerText.includes("how are you")
-    ){
+            {
+              role:"system",
 
-      reply = "I am doing great 🚀 How can I assist you today?";
+              content:
+              "You are ZEUS AI, a futuristic smart AI assistant."
+            },
 
-    }
+            {
+              role:"user",
+              content:text
+            }
 
-    // Name
+          ]
 
-    else if(
-      lowerText.includes("your name")
-    ){
-
-      reply = "My name is ZEUS AI.";
-
-    }
-
-    // Date
-
-    else if(
-      lowerText.includes("date")
-    ){
-
-      const today = new Date();
-
-      reply =
-      "Today's date is " +
-      today.toDateString();
-
-    }
-
-    // Time
-
-    else if(
-      lowerText.includes("time")
-    ){
-
-      const now = new Date();
-
-      reply =
-      "Current time is " +
-      now.toLocaleTimeString();
-
-    }
-
-    // Owner
-
-    else if(
-      lowerText.includes("owner")
-    ){
-
-      reply =
-      "Owner Contact: +2349066760078";
-
-    }
-
-    // Numbers
-
-    else if(
-      lowerText.includes("1 to 10")
-    ){
-
-      reply =
-      "1 2 3 4 5 6 7 8 9 10";
-
-    }
-
-    // Love
-
-    else if(
-      lowerText.includes("love")
-    ){
-
-      reply =
-      "Love is a beautiful thing ❤️";
-
-    }
-
-    // Joke
-
-    else if(
-      lowerText.includes("joke")
-    ){
-
-      reply =
-      "Why did the programmer quit his job? Because he didn't get arrays 😂";
-
-    }
-
-    // Weather
-
-    else if(
-      lowerText.includes("weather")
-    ){
-
-      reply =
-      "I cannot check live weather yet because API is not connected.";
-
-    }
-
-    // Help
-
-    else if(
-      lowerText.includes("help")
-    ){
-
-      reply =
-      "I can chat, answer simple questions, tell jokes, time, date and more.";
-
-    }
-
-    // Bye
-
-    else if(
-      lowerText.includes("bye")
-    ){
-
-      reply =
-      "Goodbye 👋 See you again.";
-
-    }
-
-    // Thanks
-
-    else if(
-      lowerText.includes("thank")
-    ){
-
-      reply =
-      "You're welcome ❤️";
-
-    }
-
-    // Math Detection
-
-    else if(
-      lowerText.includes("+") ||
-      lowerText.includes("-") ||
-      lowerText.includes("*") ||
-      lowerText.includes("/")
-    ){
-
-      try{
-
-        reply =
-        "Answer: " +
-        eval(lowerText);
-
-      }catch{
-
-        reply =
-        "I could not solve that calculation.";
+        })
 
       }
 
-    }
+    );
 
-    // Default Smart Replies
+    const data =
+    await response.json();
 
-    else{
-
-      const randomReplies = [
-
-        "Interesting question 👀",
-
-        "ZEUS AI is still learning new things every day 🚀",
-
-        "I understand what you said.",
-
-        "Can you explain more?",
-
-        "That sounds amazing 🔥",
-
-        "I am currently running without OpenAI API.",
-
-        "I will become smarter once AI API is connected.",
-
-        "Tell me more about that.",
-
-        "That is a good question.",
-
-        "I am here to assist you anytime."
-
-      ];
-
-      reply =
-      randomReplies[
-        Math.floor(
-          Math.random() * randomReplies.length
-        )
-      ];
-
-    }
-
-    // SHOW REPLY
-
-    botMessage.innerHTML = `
+    botDiv.innerHTML = `
       <strong>ZEUS AI:</strong><br><br>
-      ${reply}
+      ${data.choices[0].message.content}
     `;
 
-    messages.scrollTop = messages.scrollHeight;
+  }
 
-  },1000);
+  catch(error){
+
+    botDiv.innerHTML = `
+      <strong>ZEUS AI:</strong><br><br>
+      Failed to connect.
+    `;
+
+    console.log(error);
+
+  }
 
 }
 
@@ -273,11 +115,12 @@ function sendMessage(){
 
 document
 .getElementById("user-input")
-.addEventListener("keypress",function(event){
+.addEventListener("keypress", function(event){
 
   if(event.key === "Enter"){
+
     sendMessage();
+
   }
 
 });
-``
