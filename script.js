@@ -7,12 +7,12 @@ async function sendMessage() {
 
   const userMessage = input.value.trim();
 
-  if(userMessage === "") return;
+  if (!userMessage) return;
 
   // USER MESSAGE
 
   messages.innerHTML += `
-    <div class="message">
+    <div class="message user-message">
       <strong>You:</strong><br><br>
       ${userMessage}
     </div>
@@ -20,10 +20,10 @@ async function sendMessage() {
 
   input.value = "";
 
-  // LOADING MESSAGE
+  // LOADING
 
   messages.innerHTML += `
-    <div class="message" id="loading">
+    <div class="message bot-message" id="loading">
       <strong>ZEUS AI:</strong><br><br>
       Typing...
     </div>
@@ -44,23 +44,28 @@ async function sendMessage() {
         },
 
         body: JSON.stringify({
+
           model: "gpt-3.5-turbo",
 
           messages: [
+
             {
               role: "system",
               content:
-                "You are ZEUS AI, a smart futuristic assistant."
+                "You are ZEUS AI, a futuristic smart AI assistant."
             },
 
             {
               role: "user",
               content: userMessage
             }
+
           ],
 
           temperature: 0.8
+
         })
+
       }
     );
 
@@ -68,11 +73,23 @@ async function sendMessage() {
 
     document.getElementById("loading").remove();
 
+    if (data.error) {
+
+      messages.innerHTML += `
+        <div class="message bot-message">
+          <strong>ZEUS AI:</strong><br><br>
+          ${data.error.message}
+        </div>
+      `;
+
+      return;
+    }
+
     const aiReply =
       data.choices[0].message.content;
 
     messages.innerHTML += `
-      <div class="message">
+      <div class="message bot-message">
         <strong>ZEUS AI:</strong><br><br>
         ${aiReply}
       </div>
@@ -80,15 +97,19 @@ async function sendMessage() {
 
     messages.scrollTop = messages.scrollHeight;
 
-  } catch(error) {
+  } catch (error) {
 
     document.getElementById("loading").remove();
 
     messages.innerHTML += `
-      <div class="message">
+      <div class="message bot-message">
         <strong>ZEUS AI:</strong><br><br>
-        Error connecting to AI ❌
+        Error connecting to OpenAI ❌
       </div>
     `;
+
+    console.log(error);
+
   }
+
 }
