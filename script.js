@@ -7,7 +7,9 @@
 const API_KEY =
 "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";
 
+// ===============================
 // SEND MESSAGE FUNCTION
+// ===============================
 
 async function sendMessage() {
 
@@ -34,15 +36,19 @@ async function sendMessage() {
 
   messages.innerHTML += `
 
-    <div class="user-message">
+    <div class="message user-message">
 
-      <span class="label">
+      <div class="message-label">
 
-        You:
+        You
 
-      </span>
+      </div>
 
-      ${userText}
+      <div class="message-text">
+
+        ${userText}
+
+      </div>
 
     </div>
 
@@ -64,17 +70,21 @@ async function sendMessage() {
   messages.innerHTML += `
 
     <div
-      class="bot-message"
+      class="message bot-message"
       id="loading"
     >
 
-      <span class="label">
+      <div class="message-label">
 
-        ZEUS AI:
+        ZEUS AI
 
-      </span>
+      </div>
 
-      Typing...
+      <div class="message-text">
+
+        Typing...
+
+      </div>
 
     </div>
 
@@ -167,15 +177,19 @@ async function sendMessage() {
 
       messages.innerHTML += `
 
-        <div class="bot-message">
+        <div class="message bot-message">
 
-          <span class="label">
+          <div class="message-label">
 
-            ZEUS AI:
+            ZEUS AI
 
-          </span>
+          </div>
 
-          ${data.error.message} ❌
+          <div class="message-text">
+
+            ${data.error.message} ❌
+
+          </div>
 
         </div>
 
@@ -199,15 +213,19 @@ async function sendMessage() {
 
     messages.innerHTML += `
 
-      <div class="bot-message">
+      <div class="message bot-message">
 
-        <span class="label">
+        <div class="message-label">
 
-          ZEUS AI:
+          ZEUS AI
 
-        </span>
+        </div>
 
-        ${aiReply}
+        <div class="message-text">
+
+          ${aiReply}
+
+        </div>
 
       </div>
 
@@ -236,15 +254,19 @@ async function sendMessage() {
 
     messages.innerHTML += `
 
-      <div class="bot-message">
+      <div class="message bot-message">
 
-        <span class="label">
+        <div class="message-label">
 
-          ZEUS AI:
+          ZEUS AI
 
-        </span>
+        </div>
 
-        Error connecting to Groq ❌
+        <div class="message-text">
+
+          Error connecting to Groq ❌
+
+        </div>
 
       </div>
 
