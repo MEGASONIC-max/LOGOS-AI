@@ -1,3 +1,4 @@
+```javascript id="v5wyec"
 function sendMessage(){
 
   const input = document.getElementById("user-input");
@@ -5,84 +6,278 @@ function sendMessage(){
 
   const text = input.value;
 
-  // Prevent empty messages
+  const lowerText = text.toLowerCase();
+
   if(text.trim() === ""){
     return;
   }
 
-  // User Message
+  // USER MESSAGE
+
   const userMessage = document.createElement("div");
 
   userMessage.className = "message";
 
-  userMessage.innerHTML = `
-    <strong>You:</strong><br><br>
-    ${text}
-  `;
+  userMessage.innerHTML =     <strong>You:</strong><br><br>     ${text}  ;
 
   messages.appendChild(userMessage);
 
-  // Auto Scroll
-  messages.scrollTop = messages.scrollHeight;
-
-  // Clear Input
   input.value = "";
 
-  // Fake AI Typing Effect
-  const botTyping = document.createElement("div");
+  messages.scrollTop = messages.scrollHeight;
 
-  botTyping.className = "message";
+  // BOT TYPING
 
-  botTyping.innerHTML = `
+  const botMessage = document.createElement("div");
+
+  botMessage.className = "message";
+
+  botMessage.innerHTML = `
     <strong>ZEUS AI:</strong><br><br>
     Typing...
   `;
 
-  messages.appendChild(botTyping);
+  messages.appendChild(botMessage);
 
   messages.scrollTop = messages.scrollHeight;
 
-  // Fake AI Reply
+  // BOT REPLY
+
   setTimeout(() => {
 
-    const replies = [
+    let reply = "";
 
-      "Hello 👋 I am ZEUS AI. How can I help you today?",
+    // Greetings
 
-      "ZEUS AI is currently running without OpenAI API integration.",
+    if(
+      lowerText.includes("hi") ||
+      lowerText.includes("hello") ||
+      lowerText.includes("hey")
+    ){
 
-      "You can connect OpenAI API later for real AI responses.",
+      reply = "Hello 👋 Welcome to ZEUS AI.";
 
-      "Thanks for using ZEUS Chatbot 🚀",
+    }
 
-      "Owner Contact: +2349066760078",
+    // How are you
 
-      "Special thanks to +2348062285862 ❤️"
+    else if(
+      lowerText.includes("how are you")
+    ){
 
-    ];
+      reply = "I am doing great 🚀 How can I assist you today?";
 
-    const randomReply =
-      replies[Math.floor(Math.random() * replies.length)];
+    }
 
-    botTyping.innerHTML = `
+    // Name
+
+    else if(
+      lowerText.includes("your name")
+    ){
+
+      reply = "My name is ZEUS AI.";
+
+    }
+
+    // Date
+
+    else if(
+      lowerText.includes("date")
+    ){
+
+      const today = new Date();
+
+      reply =
+      "Today's date is " +
+      today.toDateString();
+
+    }
+
+    // Time
+
+    else if(
+      lowerText.includes("time")
+    ){
+
+      const now = new Date();
+
+      reply =
+      "Current time is " +
+      now.toLocaleTimeString();
+
+    }
+
+    // Owner
+
+    else if(
+      lowerText.includes("owner")
+    ){
+
+      reply =
+      "Owner Contact: +2349066760078";
+
+    }
+
+    // Numbers
+
+    else if(
+      lowerText.includes("1 to 10")
+    ){
+
+      reply =
+      "1 2 3 4 5 6 7 8 9 10";
+
+    }
+
+    // Love
+
+    else if(
+      lowerText.includes("love")
+    ){
+
+      reply =
+      "Love is a beautiful thing ❤️";
+
+    }
+
+    // Joke
+
+    else if(
+      lowerText.includes("joke")
+    ){
+
+      reply =
+      "Why did the programmer quit his job? Because he didn't get arrays 😂";
+
+    }
+
+    // Weather
+
+    else if(
+      lowerText.includes("weather")
+    ){
+
+      reply =
+      "I cannot check live weather yet because API is not connected.";
+
+    }
+
+    // Help
+
+    else if(
+      lowerText.includes("help")
+    ){
+
+      reply =
+      "I can chat, answer simple questions, tell jokes, time, date and more.";
+
+    }
+
+    // Bye
+
+    else if(
+      lowerText.includes("bye")
+    ){
+
+      reply =
+      "Goodbye 👋 See you again.";
+
+    }
+
+    // Thanks
+
+    else if(
+      lowerText.includes("thank")
+    ){
+
+      reply =
+      "You're welcome ❤️";
+
+    }
+
+    // Math Detection
+
+    else if(
+      lowerText.includes("+") ||
+      lowerText.includes("-") ||
+      lowerText.includes("*") ||
+      lowerText.includes("/")
+    ){
+
+      try{
+
+        reply =
+        "Answer: " +
+        eval(lowerText);
+
+      }catch{
+
+        reply =
+        "I could not solve that calculation.";
+
+      }
+
+    }
+
+    // Default Smart Replies
+
+    else{
+
+      const randomReplies = [
+
+        "Interesting question 👀",
+
+        "ZEUS AI is still learning new things every day 🚀",
+
+        "I understand what you said.",
+
+        "Can you explain more?",
+
+        "That sounds amazing 🔥",
+
+        "I am currently running without OpenAI API.",
+
+        "I will become smarter once AI API is connected.",
+
+        "Tell me more about that.",
+
+        "That is a good question.",
+
+        "I am here to assist you anytime."
+
+      ];
+
+      reply =
+      randomReplies[
+        Math.floor(
+          Math.random() * randomReplies.length
+        )
+      ];
+
+    }
+
+    // SHOW REPLY
+
+    botMessage.innerHTML = `
       <strong>ZEUS AI:</strong><br><br>
-      ${randomReply}
+      ${reply}
     `;
 
     messages.scrollTop = messages.scrollHeight;
 
-  },1500);
+  },1000);
 
 }
 
-/* ENTER KEY SUPPORT */
+// ENTER KEY SUPPORT
 
 document
-  .getElementById("user-input")
-  .addEventListener("keypress",function(event){
+.getElementById("user-input")
+.addEventListener("keypress",function(event){
 
-    if(event.key === "Enter"){
-      sendMessage();
-    }
+  if(event.key === "Enter"){
+    sendMessage();
+  }
 
 });
+``
