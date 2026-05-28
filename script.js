@@ -5,22 +5,22 @@ async function sendMessage() {
   const input = document.getElementById("user-input");
   const messages = document.getElementById("messages");
 
-  const userMessage = input.value.trim();
+  const userText = input.value.trim();
 
-  if (!userMessage) return;
+  if (!userText) return;
 
   // USER MESSAGE
 
   messages.innerHTML += `
     <div class="message">
       <strong>You:</strong><br><br>
-      ${userMessage}
+      ${userText}
     </div>
   `;
 
   input.value = "";
 
-  // LOADING
+  // LOADING MESSAGE
 
   messages.innerHTML += `
     <div class="message" id="loading">
@@ -45,27 +45,22 @@ async function sendMessage() {
 
         body: JSON.stringify({
 
-          model: "llama3-8b-8192",
+          model: "llama-3.1-8b-instant",
 
           messages: [
-
             {
               role: "system",
               content:
-                "You are ZEUS AI, a futuristic smart AI assistant."
+                "You are ZEUS AI, a futuristic smart assistant that replies to everything clearly and intelligently."
             },
 
             {
               role: "user",
-              content: userMessage
+              content: userText
             }
-
-          ],
-
-          temperature: 0.8
+          ]
 
         })
-
       }
     );
 
@@ -78,7 +73,7 @@ async function sendMessage() {
       messages.innerHTML += `
         <div class="message">
           <strong>ZEUS AI:</strong><br><br>
-          ${data.error.message}
+          ${data.error.message} ❌
         </div>
       `;
 
@@ -104,12 +99,22 @@ async function sendMessage() {
     messages.innerHTML += `
       <div class="message">
         <strong>ZEUS AI:</strong><br><br>
-        Error connecting to Groq API ❌
-      </div>
+          Error connecting to Groq ❌
+        </div>
     `;
 
     console.log(error);
-
   }
-
 }
+
+// ENTER KEY SUPPORT
+
+document
+  .getElementById("user-input")
+  .addEventListener("keypress", function(e) {
+
+    if (e.key === "Enter") {
+      sendMessage();
+    }
+
+});
