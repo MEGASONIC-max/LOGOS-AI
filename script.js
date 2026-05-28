@@ -9,7 +9,7 @@ const sendBtn = document.getElementById("send-btn");
 // PUT YOUR GROQ API KEY
 // =========================
 
-const API_KEY = "YOUR_GROQ_API_KEY";
+const API_KEY = "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";
 
 
 // =========================
