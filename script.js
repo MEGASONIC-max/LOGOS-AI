@@ -1,4 +1,4 @@
-const API_KEY = "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";
+const API_KEY = "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";
 
 async function sendMessage() {
 
@@ -12,7 +12,7 @@ async function sendMessage() {
   // USER MESSAGE
 
   messages.innerHTML += `
-    <div class="message user-message">
+    <div class="message">
       <strong>You:</strong><br><br>
       ${userMessage}
     </div>
@@ -23,7 +23,7 @@ async function sendMessage() {
   // LOADING
 
   messages.innerHTML += `
-    <div class="message bot-message" id="loading">
+    <div class="message" id="loading">
       <strong>ZEUS AI:</strong><br><br>
       Typing...
     </div>
@@ -34,7 +34,7 @@ async function sendMessage() {
   try {
 
     const response = await fetch(
-      "https://api.openai.com/v1/chat/completions",
+      "https://api.groq.com/openai/v1/chat/completions",
       {
         method: "POST",
 
@@ -45,7 +45,7 @@ async function sendMessage() {
 
         body: JSON.stringify({
 
-          model: "gpt-3.5-turbo",
+          model: "llama3-8b-8192",
 
           messages: [
 
@@ -76,7 +76,7 @@ async function sendMessage() {
     if (data.error) {
 
       messages.innerHTML += `
-        <div class="message bot-message">
+        <div class="message">
           <strong>ZEUS AI:</strong><br><br>
           ${data.error.message}
         </div>
@@ -89,7 +89,7 @@ async function sendMessage() {
       data.choices[0].message.content;
 
     messages.innerHTML += `
-      <div class="message bot-message">
+      <div class="message">
         <strong>ZEUS AI:</strong><br><br>
         ${aiReply}
       </div>
@@ -102,9 +102,9 @@ async function sendMessage() {
     document.getElementById("loading").remove();
 
     messages.innerHTML += `
-      <div class="message bot-message">
+      <div class="message">
         <strong>ZEUS AI:</strong><br><br>
-        Error connecting to OpenAI ❌
+        Error connecting to Groq API ❌
       </div>
     `;
 
