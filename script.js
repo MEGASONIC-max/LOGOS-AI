@@ -8,43 +8,44 @@ async function sendMessage(){
   const messages =
   document.getElementById("messages");
 
-  const text = input.value.trim();
+  const text =
+  input.value.trim();
 
   if(text === ""){
     return;
   }
 
-  // SHOW USER MESSAGE
+  // USER MESSAGE
 
-  const userDiv =
+  const userMessage =
   document.createElement("div");
 
-  userDiv.className = "message";
+  userMessage.className =
+  "message";
 
-  userDiv.innerHTML = `
+  userMessage.innerHTML = `
     <strong>You:</strong><br><br>
     ${text}
   `;
 
-  messages.appendChild(userDiv);
-
-  // CLEAR INPUT
+  messages.appendChild(userMessage);
 
   input.value = "";
 
-  // BOT THINKING
+  // BOT MESSAGE
 
-  const botDiv =
+  const botMessage =
   document.createElement("div");
 
-  botDiv.className = "message";
+  botMessage.className =
+  "message";
 
-  botDiv.innerHTML = `
+  botMessage.innerHTML = `
     <strong>ZEUS AI:</strong><br><br>
     Thinking...
   `;
 
-  messages.appendChild(botDiv);
+  messages.appendChild(botMessage);
 
   try{
 
@@ -58,13 +59,14 @@ async function sendMessage(){
 
         headers:{
           "Content-Type":"application/json",
+
           "Authorization":
           `Bearer ${OPENAI_API_KEY}`
         },
 
         body:JSON.stringify({
 
-          model:"gpt-3.5-turbo",
+          model:"gpt-4o-mini",
 
           messages:[
 
@@ -72,11 +74,12 @@ async function sendMessage(){
               role:"system",
 
               content:
-              "You are ZEUS AI, a futuristic smart AI assistant."
+              "You are ZEUS AI, a futuristic smart assistant."
             },
 
             {
               role:"user",
+
               content:text
             }
 
@@ -91,7 +94,21 @@ async function sendMessage(){
     const data =
     await response.json();
 
-    botDiv.innerHTML = `
+    console.log(data);
+
+    // CHECK ERRORS
+
+    if(data.error){
+
+      botMessage.innerHTML = `
+        <strong>ZEUS AI:</strong><br><br>
+        ${data.error.message}
+      `;
+
+      return;
+    }
+
+    botMessage.innerHTML = `
       <strong>ZEUS AI:</strong><br><br>
       ${data.choices[0].message.content}
     `;
@@ -100,12 +117,12 @@ async function sendMessage(){
 
   catch(error){
 
-    botDiv.innerHTML = `
-      <strong>ZEUS AI:</strong><br><br>
-      Failed to connect.
-    `;
-
     console.log(error);
+
+    botMessage.innerHTML = `
+      <strong>ZEUS AI:</strong><br><br>
+      Failed to connect to OpenAI.
+    `;
 
   }
 
