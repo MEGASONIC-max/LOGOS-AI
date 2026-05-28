@@ -1,225 +1,120 @@
-const chatBox = document.getElementById("chat-box");
-
-const userInput = document.getElementById("user-input");
-
-const sendBtn = document.getElementById("send-btn");
-
-
-// =========================
-// PUT YOUR GROQ API KEY
-// =========================
-
 const API_KEY = "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";
 
+async function sendMessage() {
 
-// =========================
-// SYSTEM PROMPT
-// =========================
+  const input = document.getElementById("user-input");
+  const messages = document.getElementById("messages");
 
-const systemPrompt = `
-You are ZEUS AI.
+  const userText = input.value.trim();
 
-A powerful smart AI assistant similar to ChatGPT.
+  if (!userText) return;
 
-You are friendly, intelligent and helpful.
+  // USER MESSAGE
 
-Reply naturally and clearly.
+  messages.innerHTML += `
+    <div class="message">
+      <strong>You:</strong><br><br>
+      ${userText}
+    </div>
+  `;
 
-Keep answers short unless the user asks for details.
+  input.value = "";
 
-Never say you are ChatGPT.
-`;
+  // LOADING MESSAGE
 
+  messages.innerHTML += `
+    <div class="message" id="loading">
+      <strong>ZEUS AI:</strong><br><br>
+      Typing...
+    </div>
+  `;
 
-// =========================
-// ADD MESSAGE FUNCTION
-// =========================
+  messages.scrollTop = messages.scrollHeight;
 
-function addMessage(sender, message){
+  try {
 
-    // Remove welcome screen
-    const welcome = document.querySelector(".welcome");
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
 
-    if(welcome){
-        welcome.remove();
-    }
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${API_KEY}`
+        },
 
-    // Create message div
-    const messageDiv = document.createElement("div");
+        body: JSON.stringify({
 
-    messageDiv.classList.add("message");
+          model: "llama-3.1-8b-instant",
 
-    // User or bot style
-    if(sender === "You"){
-        messageDiv.classList.add("user");
-    }else{
-        messageDiv.classList.add("bot");
-    }
-
-    // Add text
-    messageDiv.innerHTML = `
-        <p>${message}</p>
-    `;
-
-    // Add to chat
-    chatBox.appendChild(messageDiv);
-
-    // Auto scroll
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-
-// =========================
-// TYPING MESSAGE
-// =========================
-
-function showTyping(){
-
-    const typingDiv = document.createElement("div");
-
-    typingDiv.classList.add("message", "bot");
-
-    typingDiv.id = "typing";
-
-    typingDiv.innerHTML = `
-        <p>Typing...</p>
-    `;
-
-    chatBox.appendChild(typingDiv);
-
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-
-// =========================
-// REMOVE TYPING
-// =========================
-
-function removeTyping(){
-
-    const typing = document.getElementById("typing");
-
-    if(typing){
-        typing.remove();
-    }
-
-}
-
-
-// =========================
-// SEND MESSAGE
-// =========================
-
-async function sendMessage(){
-
-    const message = userInput.value.trim();
-
-    // Stop empty messages
-    if(message === "") return;
-
-    // Add user message
-    addMessage("You", message);
-
-    // Clear input
-    userInput.value = "";
-
-    // Show typing
-    showTyping();
-
-    try{
-
-        const response = await fetch(
-            "https://api.groq.com/openai/v1/chat/completions",
+          messages: [
             {
+              role: "system",
+              content:
+                "You are ZEUS AI, a futuristic smart assistant that replies to everything clearly and intelligently."
+            },
 
-                method:"POST",
-
-                headers:{
-                    "Content-Type":"application/json",
-                    "Authorization":`Bearer ${API_KEY}`
-                },
-
-                body:JSON.stringify({
-
-                    model:"llama3-70b-8192",
-
-                    messages:[
-
-                        {
-                            role:"system",
-                            content:systemPrompt
-                        },
-
-                        {
-                            role:"user",
-                            content:message
-                        }
-
-                    ],
-
-                    temperature:0.7,
-
-                    max_tokens:500
-
-                })
-
+            {
+              role: "user",
+              content: userText
             }
-        );
+          ]
 
-        const data = await response.json();
+        })
+      }
+    );
 
-        // Remove typing
-        removeTyping();
+    const data = await response.json();
 
-        // AI response
-        if(data.choices && data.choices.length > 0){
+    document.getElementById("loading").remove();
 
-            const aiReply = data.choices[0].message.content;
+    if (data.error) {
 
-            addMessage("ZEUS AI", aiReply);
+      messages.innerHTML += `
+        <div class="message">
+          <strong>ZEUS AI:</strong><br><br>
+          ${data.error.message} ❌
+        </div>
+      `;
 
-        }else{
-
-            addMessage(
-                "ZEUS AI",
-                "Sorry, I couldn't understand that."
-            );
-
-        }
-
-    }catch(error){
-
-        console.error(error);
-
-        removeTyping();
-
-        addMessage(
-            "ZEUS AI",
-            "Error connecting to AI."
-        );
-
+      return;
     }
 
+    const aiReply =
+      data.choices[0].message.content;
+
+    messages.innerHTML += `
+      <div class="message">
+        <strong>ZEUS AI:</strong><br><br>
+        ${aiReply}
+      </div>
+    `;
+
+    messages.scrollTop = messages.scrollHeight;
+
+  } catch (error) {
+
+    document.getElementById("loading").remove();
+
+    messages.innerHTML += `
+      <div class="message">
+        <strong>ZEUS AI:</strong><br><br>
+          Error connecting to Groq ❌
+        </div>
+    `;
+
+    console.log(error);
+  }
 }
 
+// ENTER KEY SUPPORT
 
-// =========================
-// BUTTON CLICK
-// =========================
+document
+  .getElementById("user-input")
+  .addEventListener("keypress", function(e) {
 
-sendBtn.addEventListener("click", sendMessage);
-
-
-// =========================
-// ENTER KEY SEND
-// =========================
-
-userInput.addEventListener("keypress", function(e){
-
-    if(e.key === "Enter"){
-
-        sendMessage();
-
+    if (e.key === "Enter") {
+      sendMessage();
     }
 
 });
