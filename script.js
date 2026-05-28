@@ -1,4 +1,4 @@
-const API_KEY = "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";
+const API_KEY = "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";
 
 async function sendMessage() {
 
