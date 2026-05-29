@@ -71,16 +71,35 @@ function typeText(element, text){
 
   let index = 0;
 
-  element.textContent = "";
+  element.innerHTML = "";
 
   const interval = setInterval(() => {
 
     if(index < text.length){
 
-      element.textContent +=
-      text.charAt(index);
+      // THIS FIXES THE HTML TAG ISSUE
 
-      index++;
+      if(text.charAt(index) === "<"){
+
+        const closeTag =
+        text.indexOf(">", index);
+
+        element.innerHTML +=
+        text.substring(index, closeTag + 1);
+
+        index =
+        closeTag + 1;
+
+      }
+
+      else{
+
+        element.innerHTML +=
+        text.charAt(index);
+
+        index++;
+
+      }
 
       messages.scrollTop =
       messages.scrollHeight;
@@ -130,7 +149,14 @@ async function sendMessage() {
     const imageURL =
     URL.createObjectURL(imageFile);
 
-    imageHTML =        <img         src="${imageURL}"         class="preview-image"       >     ;
+    imageHTML = `
+
+      <img
+        src="${imageURL}"
+        class="preview-image"
+      >
+
+    `;
 
   }
 
@@ -138,7 +164,27 @@ async function sendMessage() {
   // SHOW USER MESSAGE
   // ===============================
 
-  messages.innerHTML +=      <div class="message user-message">        <div class="message-label">          You        </div>        <div class="message-text">          ${userText}        </div>        ${imageHTML}      </div>   ;
+  messages.innerHTML += `
+
+    <div class="message user-message">
+
+      <div class="message-label">
+
+        YOU
+
+      </div>
+
+      <div class="message-text">
+
+        ${userText}
+
+      </div>
+
+      ${imageHTML}
+
+    </div>
+
+  `;
 
   // SAVE CHAT
 
@@ -159,7 +205,30 @@ async function sendMessage() {
   // LOADING MESSAGE
   // ===============================
 
-  messages.innerHTML +=      <div       class="message bot-message ai-message"       id="loading"     >        <div class="message-label">          ZEUS AI        </div>        <div class="message-text typing-animation">          <span></span>         <span></span>         <span></span>        </div>      </div>   ;
+  messages.innerHTML += `
+
+    <div
+      class="message bot-message ai-message"
+      id="loading"
+    >
+
+      <div class="message-label">
+
+        ZEUS AI
+
+      </div>
+
+      <div class="message-text typing-animation">
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+      </div>
+
+    </div>
+
+  `;
 
   // AUTO SCROLL
 
@@ -201,26 +270,8 @@ async function sendMessage() {
 
     );
 
-    let data;
-
-    try{
-
-      data =
-      await response.json();
-
-    }
-
-    catch(err){
-
-      document
-      .getElementById("loading")
-      .remove();
-
-      messages.innerHTML +=          <div class="message bot-message">            <div class="message-label">              ZEUS AI            </div>            <div class="message-text">              Invalid server response ❌            </div>          </div>       ;
-
-      return;
-
-    }
+    const data =
+    await response.json();
 
     // REMOVE LOADING
 
@@ -234,7 +285,25 @@ async function sendMessage() {
 
     if(data.error){
 
-      messages.innerHTML +=          <div class="message bot-message">            <div class="message-label">              ZEUS AI            </div>            <div class="message-text">              ${data.error}            </div>          </div>       ;
+      messages.innerHTML += `
+
+        <div class="message bot-message">
+
+          <div class="message-label">
+
+            ZEUS AI
+
+          </div>
+
+          <div class="message-text">
+
+            ${data.error}
+
+          </div>
+
+        </div>
+
+      `;
 
       saveChat();
 
@@ -243,13 +312,29 @@ async function sendMessage() {
     }
 
     // ===============================
-    // AI RESPONSE
+    // AI RESPONSE CONTAINER
     // ===============================
 
-    const aiId =
-    "ai-" + Date.now();
+    messages.innerHTML += `
 
-    messages.innerHTML +=        <div class="message bot-message ai-message">          <div class="message-label">            ZEUS AI          </div>          <div           class="message-text"           id="${aiId}"         >          </div>        </div>     ;
+      <div class="message bot-message ai-message">
+
+        <div class="message-label">
+
+          ZEUS AI
+
+        </div>
+
+        <div
+          class="message-text"
+          id="typingText"
+        >
+
+        </div>
+
+      </div>
+
+    `;
 
     // AUTO SCROLL
 
@@ -261,14 +346,20 @@ async function sendMessage() {
     // ===============================
 
     const typingElement =
-    document.getElementById(aiId);
+    document.getElementById(
+      "typingText"
+    );
+
+    // FIXED MARKDOWN RENDERING
+
+    const formattedReply =
+    marked.parse(data.reply || "No reply");
 
     typeText(
 
       typingElement,
 
-      data.reply ||
-      "ZEUS AI could not generate a response."
+      formattedReply
 
     );
 
@@ -293,7 +384,25 @@ async function sendMessage() {
 
     // SHOW ERROR
 
-    messages.innerHTML +=        <div class="message bot-message">          <div class="message-label">            ZEUS AI          </div>          <div class="message-text">            Error connecting to server ❌          </div>        </div>     ;
+    messages.innerHTML += `
+
+      <div class="message bot-message">
+
+        <div class="message-label">
+
+          ZEUS AI
+
+        </div>
+
+        <div class="message-text">
+
+          Error connecting to server ❌
+
+        </div>
+
+      </div>
+
+    `;
 
     saveChat();
 
