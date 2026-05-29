@@ -1,78 +1,118 @@
 const express = require("express");
 const multer = require("multer");
 const fs = require("fs");
+const path = require("path");
+const dotenv = require("dotenv");
 const OpenAI = require("openai");
-require("dotenv").config();
+
+dotenv.config();
 
 const app = express();
 
 const upload = multer({
-dest:"uploads/"
+dest: "uploads/"
 });
 
 const client = new OpenAI({
 apiKey: process.env.OPENAI_API_KEY
 });
 
-app.use(express.static("public"));
+// USE ROOT FOLDER
+app.use(express.static(__dirname));
 
-app.post("/chat", upload.single("image"), async(req,res)=>{
+// MAIN PAGE
+app.get("/", (req, res) => {
+res.sendFile(path.join(__dirname, "index.html"));
+});
 
-try{
+// CHAT ROUTE
+app.post("/chat", upload.single("image"), async (req, res) => {
 
-const message = req.body.message;
+try {
 
-let content = [
-{
-type:"text",
-text:message
+const message = req.body.message || "";
+
+let content = [];
+
+// USER TEXT
+if(message){
+content.push({
+type: "text",
+text: message
+});
 }
-];
 
+// USER IMAGE
 if(req.file){
 
-const base64 = fs.readFileSync(req.file.path,{
-encoding:"base64"
+const imagePath = req.file.path;
+
+const base64 = fs.readFileSync(imagePath, {
+encoding: "base64"
 });
 
 content.push({
-type:"image_url",
-image_url:{
-url:`data:image/jpeg;base64,${base64}`
+type: "image_url",
+image_url: {
+url: `data:image/jpeg;base64,${base64}`
 }
 });
 
+// DELETE TEMP FILE
+fs.unlinkSync(imagePath);
+
 }
 
+// SEND TO AI
 const response = await client.chat.completions.create({
 
-model:"gpt-4o-mini",
+model: "gpt-4o-mini",
 
-messages:[
+messages: [
 {
-role:"user",
-content:content
+role: "system",
+content: `
+You are ZEUS AI,
+a smart, friendly,
+advanced AI assistant.
+
+Reply naturally like ChatGPT.
+Be intelligent, conversational,
+helpful and modern.
+`
+},
+{
+role: "user",
+content: content
 }
-]
+],
+
+max_tokens: 1000
 
 });
+
+// SEND RESPONSE
+res.json({
+reply: response.choices[0].message.content
+});
+
+} catch (error) {
+
+console.log(error);
 
 res.json({
-reply:response.choices[0].message.content
-});
-
-}catch(err){
-
-console.log(err);
-
-res.json({
-reply:"Server error."
+reply: "ZEUS AI encountered an error."
 });
 
 }
 
 });
 
-app.listen(3000,()=>{
-console.log("Server running");
+// PORT
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+
+console.log(`ZEUS AI running on port ${PORT}`);
+
 });
