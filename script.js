@@ -1,6 +1,6 @@
 // ===============================
 // ZEUS AI CHATBOT
-// FULL SCRIPT.JS
+// FULL FIXED SCRIPT.JS
 // ===============================
 
 // ===============================
@@ -8,7 +8,7 @@
 // ===============================
 
 const API_KEY =
-"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";
+"YOUR_GROQ_API_KEY_HERE";
 
 // ===============================
 // ELEMENTS
@@ -30,18 +30,17 @@ document.getElementById("send-btn");
 // LOAD CHAT HISTORY
 // ===============================
 
-window.onload = function(){
+window.onload = function () {
 
   const savedChats =
   localStorage.getItem("zeus_chat");
 
-  if(savedChats){
+  if (savedChats) {
 
     messages.innerHTML =
     savedChats;
 
-    messages.scrollTop =
-    messages.scrollHeight;
+    scrollToBottom();
 
   }
 
@@ -51,15 +50,27 @@ window.onload = function(){
 // SAVE CHAT HISTORY
 // ===============================
 
-function saveChat(){
+function saveChat() {
 
   localStorage.setItem(
-
     "zeus_chat",
-
     messages.innerHTML
-
   );
+
+}
+
+// ===============================
+// AUTO SCROLL
+// ===============================
+
+function scrollToBottom() {
+
+  setTimeout(() => {
+
+    messages.scrollTop =
+    messages.scrollHeight;
+
+  }, 50);
 
 }
 
@@ -67,32 +78,36 @@ function saveChat(){
 // TYPE EFFECT
 // ===============================
 
-function typeText(element, text){
+function typeText(element, text) {
 
   let index = 0;
 
   element.innerHTML = "";
 
-  const interval = setInterval(() => {
+  const interval =
+  setInterval(() => {
 
-    if(index < text.length){
+    if (index < text.length) {
 
-      // THIS FIXES THE HTML TAG ISSUE
+      // FIX HTML TAG ISSUE
 
-      if(text.charAt(index) === "<"){
+      if (text.charAt(index) === "<") {
 
         const closeTag =
         text.indexOf(">", index);
 
         element.innerHTML +=
-        text.substring(index, closeTag + 1);
+        text.substring(
+          index,
+          closeTag + 1
+        );
 
         index =
         closeTag + 1;
 
       }
 
-      else{
+      else {
 
         element.innerHTML +=
         text.charAt(index);
@@ -101,18 +116,17 @@ function typeText(element, text){
 
       }
 
-      // AUTO SCROLL FIX
-
-      messages.scrollTop =
-      messages.scrollHeight;
+      scrollToBottom();
 
     }
 
-    else{
+    else {
 
       clearInterval(interval);
 
       saveChat();
+
+      scrollToBottom();
 
     }
 
@@ -138,7 +152,8 @@ async function sendMessage() {
 
   // STOP EMPTY MESSAGE
 
-  if (!userText && !imageFile) return;
+  if (!userText && !imageFile)
+  return;
 
   // ===============================
   // USER IMAGE PREVIEW
@@ -163,23 +178,19 @@ async function sendMessage() {
   }
 
   // ===============================
-  // SHOW USER MESSAGE
+  // USER MESSAGE HTML
   // ===============================
 
-  messages.innerHTML += `
+  const userMessage = `
 
     <div class="message user-message">
 
       <div class="message-label">
-
         YOU
-
       </div>
 
       <div class="message-text">
-
         ${userText}
-
       </div>
 
       ${imageHTML}
@@ -188,14 +199,20 @@ async function sendMessage() {
 
   `;
 
-  // SAVE CHAT
+  // ADD USER MESSAGE
+
+  messages.insertAdjacentHTML(
+    "beforeend",
+    userMessage
+  );
+
+  // SAVE
 
   saveChat();
 
-  // AUTO SCROLL
+  // SCROLL
 
-  messages.scrollTop =
-  messages.scrollHeight;
+  scrollToBottom();
 
   // CLEAR INPUTS
 
@@ -204,20 +221,25 @@ async function sendMessage() {
   imageInput.value = "";
 
   // ===============================
+  // CREATE UNIQUE BOT ID
+  // ===============================
+
+  const botId =
+  "bot-" + Date.now();
+
+  // ===============================
   // LOADING MESSAGE
   // ===============================
 
-  messages.innerHTML += `
+  const loadingHTML = `
 
     <div
       class="message bot-message ai-message"
-      id="loading"
+      id="${botId}"
     >
 
       <div class="message-label">
-
         ZEUS AI
-
       </div>
 
       <div class="message-text typing-animation">
@@ -232,25 +254,35 @@ async function sendMessage() {
 
   `;
 
-  // AUTO SCROLL
+  // IMPORTANT FIX:
+  // ADD LOADING DIRECTLY AFTER USER MESSAGE
 
-  messages.scrollTop =
-  messages.scrollHeight;
+  messages.insertAdjacentHTML(
+    "beforeend",
+    loadingHTML
+  );
+
+  scrollToBottom();
 
   try {
 
     // ===============================
-    // GROQ API DIRECT REQUEST
+    // FINAL MESSAGE
     // ===============================
 
-    let finalMessage = userText;
+    let finalMessage =
+    userText;
 
-    if(imageFile){
+    if (imageFile) {
 
       finalMessage +=
-      "\n\n[User also uploaded an image]";
+      "\n\n[User uploaded an image]";
 
     }
+
+    // ===============================
+    // API REQUEST
+    // ===============================
 
     const response =
     await fetch(
@@ -258,11 +290,13 @@ async function sendMessage() {
       "https://api.groq.com/openai/v1/chat/completions",
 
       {
+
         method: "POST",
 
         headers: {
 
-          "Content-Type": "application/json",
+          "Content-Type":
+          "application/json",
 
           "Authorization":
           `Bearer ${API_KEY}`
@@ -271,19 +305,27 @@ async function sendMessage() {
 
         body: JSON.stringify({
 
-          model: "llama-3.3-70b-versatile",
+          model:
+          "llama-3.3-70b-versatile",
 
           messages: [
 
             {
+
               role: "system",
+
               content:
-              "You are ZEUS AI, a smart and futuristic AI assistant. Keep replies short unless the user asks for detailed explanations."
+              "You are ZEUS AI, a smart futuristic AI assistant. Keep replies short unless user asks for details."
+
             },
 
             {
+
               role: "user",
-              content: finalMessage
+
+              content:
+              finalMessage
+
             }
 
           ],
@@ -298,52 +340,20 @@ async function sendMessage() {
 
     );
 
-    if(!response.ok){
+    // ===============================
+    // RESPONSE ERROR
+    // ===============================
 
-      throw new Error("API Error");
+    if (!response.ok) {
+
+      throw new Error(
+        "API Error"
+      );
 
     }
 
     const data =
     await response.json();
-
-    // REMOVE LOADING
-
-    document
-    .getElementById("loading")
-    .remove();
-
-    // ===============================
-    // SHOW API ERROR
-    // ===============================
-
-    if(data.error){
-
-      messages.innerHTML += `
-
-        <div class="message bot-message">
-
-          <div class="message-label">
-
-            ZEUS AI
-
-          </div>
-
-          <div class="message-text">
-
-            ${data.error.message}
-
-          </div>
-
-        </div>
-
-      `;
-
-      saveChat();
-
-      return;
-
-    }
 
     // ===============================
     // AI REPLY
@@ -351,39 +361,54 @@ async function sendMessage() {
 
     const aiReply =
 
-      data.choices?.[0]?.message?.content
+      data.choices?.[0]
+      ?.message?.content
 
       || "No reply";
 
     // ===============================
-    // AI RESPONSE CONTAINER
+    // SHORT REPLY
     // ===============================
 
-    messages.innerHTML += `
+    const shortReply =
 
-      <div class="message bot-message ai-message">
+      aiReply
+      .split(". ")
+      .slice(0, 4)
+      .join(". ");
 
-        <div class="message-label">
+    // ===============================
+    // MARKDOWN FORMAT
+    // ===============================
 
-          ZEUS AI
+    const formattedReply =
 
-        </div>
+      marked.parse(shortReply);
 
-        <div
-          class="message-text"
-          id="typingText"
-        >
+    // ===============================
+    // REPLACE LOADING MESSAGE
+    // ===============================
 
-        </div>
+    const loadingElement =
+    document.getElementById(botId);
+
+    // IMPORTANT FIX:
+    // REPLACE ONLY THIS BOT MESSAGE
+
+    loadingElement.innerHTML = `
+
+      <div class="message-label">
+        ZEUS AI
+      </div>
+
+      <div
+        class="message-text"
+        id="typing-${botId}"
+      >
 
       </div>
 
     `;
-
-    // AUTO SCROLL
-
-    messages.scrollTop =
-    messages.scrollHeight;
 
     // ===============================
     // TYPE RESPONSE
@@ -391,45 +416,15 @@ async function sendMessage() {
 
     const typingElement =
     document.getElementById(
-      "typingText"
+      `typing-${botId}`
     );
-
-    // SHORT REPLY FIX
-
-    const shortReply =
-    aiReply
-    .split(". ")
-    .slice(0,2)
-    .join(". ");
-
-    // FIXED MARKDOWN RENDERING
-
-    const formattedReply =
-    marked.parse(shortReply);
 
     typeText(
-
       typingElement,
-
       formattedReply
-
     );
 
-    // EXTRA AUTO SCROLL FIX
-
-    const autoScroll =
-    setInterval(() => {
-
-      messages.scrollTop =
-      messages.scrollHeight;
-
-    }, 50);
-
-    setTimeout(() => {
-
-      clearInterval(autoScroll);
-
-    }, 3000);
+    scrollToBottom();
 
   }
 
@@ -437,44 +432,35 @@ async function sendMessage() {
   // CONNECTION ERROR
   // ===============================
 
-  catch(error){
+  catch (error) {
 
-    // REMOVE LOADING
+    console.log(error);
 
-    const loading =
-    document.getElementById("loading");
+    const loadingElement =
+    document.getElementById(botId);
 
-    if(loading){
+    if (loadingElement) {
 
-      loading.remove();
-
-    }
-
-    // SHOW ERROR
-
-    messages.innerHTML += `
-
-      <div class="message bot-message">
+      loadingElement.innerHTML = `
 
         <div class="message-label">
-
           ZEUS AI
-
         </div>
 
         <div class="message-text">
 
-          Error connecting to server ❌
+          Error connecting
+          to server ❌
 
         </div>
 
-      </div>
+      `;
 
-    `;
+    }
 
     saveChat();
 
-    console.log(error);
+    scrollToBottom();
 
   }
 
@@ -488,9 +474,11 @@ input.addEventListener(
 
   "keypress",
 
-  function(e){
+  function (e) {
 
-    if(e.key === "Enter"){
+    if (e.key === "Enter") {
+
+      e.preventDefault();
 
       sendMessage();
 
@@ -508,7 +496,7 @@ sendBtn.addEventListener(
 
   "click",
 
-  function(){
+  function () {
 
     sendMessage();
 
@@ -517,20 +505,23 @@ sendBtn.addEventListener(
 );
 
 // ===============================
-// IMAGE PREVIEW NAME
+// IMAGE PREVIEW
 // ===============================
 
 imageInput.addEventListener(
 
   "change",
 
-  function(){
+  function () {
 
-    if(imageInput.files[0]){
+    if (imageInput.files[0]) {
 
       console.log(
+
         "Image selected:",
+
         imageInput.files[0].name
+
       );
 
     }
