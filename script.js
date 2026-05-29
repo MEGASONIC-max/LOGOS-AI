@@ -238,34 +238,60 @@ async function sendMessage() {
   try {
 
     // ===============================
-    // SEND TO YOUR SERVER
+    // GROQ API DIRECT REQUEST
     // ===============================
 
-    const formData =
-    new FormData();
+    let finalMessage = userText;
 
-    formData.append(
-      "message",
-      userText
-    );
+    if(imageFile){
 
-    if (imageFile) {
-
-      formData.append(
-        "image",
-        imageFile
-      );
+      finalMessage +=
+      "\n\n[User also uploaded an image]";
 
     }
 
     const response =
     await fetch(
 
-      "/chat",
+      "https://api.groq.com/openai/v1/chat/completions",
 
       {
         method: "POST",
-        body: formData
+
+        headers: {
+
+          "Content-Type": "application/json",
+
+          "Authorization":
+          `Bearer ${API_KEY}`
+
+        },
+
+        body: JSON.stringify({
+
+          model: "llama3-70b-8192",
+
+          messages: [
+
+            {
+              role: "system",
+              content:
+              "You are ZEUS AI, a smart and futuristic AI assistant."
+            },
+
+            {
+              role: "user",
+              content: finalMessage
+            }
+
+          ],
+
+          temperature: 0.7,
+
+          max_tokens: 2000
+
+        })
+
       }
 
     );
@@ -280,7 +306,7 @@ async function sendMessage() {
     .remove();
 
     // ===============================
-    // SHOW SERVER ERROR
+    // SHOW API ERROR
     // ===============================
 
     if(data.error){
@@ -297,7 +323,7 @@ async function sendMessage() {
 
           <div class="message-text">
 
-            ${data.error}
+            ${data.error.message}
 
           </div>
 
@@ -310,6 +336,16 @@ async function sendMessage() {
       return;
 
     }
+
+    // ===============================
+    // AI REPLY
+    // ===============================
+
+    const aiReply =
+
+      data.choices?.[0]?.message?.content
+
+      || "No reply";
 
     // ===============================
     // AI RESPONSE CONTAINER
@@ -334,139 +370,4 @@ async function sendMessage() {
 
       </div>
 
-    `;
-
-    // AUTO SCROLL
-
-    messages.scrollTop =
-    messages.scrollHeight;
-
-    // ===============================
-    // TYPE RESPONSE
-    // ===============================
-
-    const typingElement =
-    document.getElementById(
-      "typingText"
-    );
-
-    // FIXED MARKDOWN RENDERING
-
-    const formattedReply =
-    marked.parse(data.reply || "No reply");
-
-    typeText(
-
-      typingElement,
-
-      formattedReply
-
-    );
-
-  }
-
-  // ===============================
-  // CONNECTION ERROR
-  // ===============================
-
-  catch(error){
-
-    // REMOVE LOADING
-
-    const loading =
-    document.getElementById("loading");
-
-    if(loading){
-
-      loading.remove();
-
-    }
-
-    // SHOW ERROR
-
-    messages.innerHTML += `
-
-      <div class="message bot-message">
-
-        <div class="message-label">
-
-          ZEUS AI
-
-        </div>
-
-        <div class="message-text">
-
-          Error connecting to server ❌
-
-        </div>
-
-      </div>
-
-    `;
-
-    saveChat();
-
-    console.log(error);
-
-  }
-
-}
-
-// ===============================
-// ENTER KEY SUPPORT
-// ===============================
-
-input.addEventListener(
-
-  "keypress",
-
-  function(e){
-
-    if(e.key === "Enter"){
-
-      sendMessage();
-
-    }
-
-  }
-
-);
-
-// ===============================
-// BUTTON CLICK
-// ===============================
-
-sendBtn.addEventListener(
-
-  "click",
-
-  function(){
-
-    sendMessage();
-
-  }
-
-);
-
-// ===============================
-// IMAGE PREVIEW NAME
-// ===============================
-
-imageInput.addEventListener(
-
-  "change",
-
-  function(){
-
-    if(imageInput.files[0]){
-
-      console.log(
-        "Image selected:",
-        imageInput.files[0].name
-      );
-
-    }
-
-  }
-
-);
+    `
