@@ -45,7 +45,10 @@
 
     </div>
 
-    <button class="nav-btn">
+    <button
+      class="nav-btn"
+      onclick="scrollToChat()"
+    >
 
       Ask AI
 
@@ -73,13 +76,19 @@
 
     <div class="hero-buttons">
 
-      <button class="primary-btn">
+      <button
+        class="primary-btn"
+        onclick="scrollToChat()"
+      >
 
         Get Started
 
       </button>
 
-      <button class="secondary-btn">
+      <button
+        class="secondary-btn"
+        onclick="scrollToChat()"
+      >
 
         Try It Out
 
@@ -211,6 +220,24 @@
   <!-- SCRIPT -->
 
   <script src="script.js"></script>
+
+  <!-- SCROLL FUNCTION -->
+
+  <script>
+
+    function scrollToChat() {
+
+      document
+      .querySelector(".chat-section")
+      .scrollIntoView({
+
+        behavior: "smooth"
+
+      });
+
+    }
+
+  </script>
 
 </body>
 
