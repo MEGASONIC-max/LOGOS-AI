@@ -1,37 +1,75 @@
 // ===============================
 // ZEUS AI CHATBOT
+// FULL SCRIPT.JS
 // ===============================
 
+// ===============================
 // GROQ API KEY
+// ===============================
 
 const API_KEY =
-"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";
+"YOUR_GROQ_API_KEY_HERE";
 
 // ===============================
-// SEND MESSAGE FUNCTION
+// ELEMENTS
+// ===============================
+
+const input =
+document.getElementById("user-input");
+
+const messages =
+document.getElementById("messages");
+
+const imageInput =
+document.getElementById("imageInput");
+
+const sendBtn =
+document.getElementById("send-btn");
+
+// ===============================
+// SEND MESSAGE
 // ===============================
 
 async function sendMessage() {
-
-  // INPUT + MESSAGE BOX
-
-  const input =
-  document.getElementById("user-input");
-
-  const messages =
-  document.getElementById("messages");
 
   // USER TEXT
 
   const userText =
   input.value.trim();
 
+  // USER IMAGE
+
+  const imageFile =
+  imageInput.files[0];
+
   // STOP EMPTY MESSAGE
 
-  if (!userText) return;
+  if (!userText && !imageFile) return;
 
   // ===============================
-  // USER MESSAGE
+  // USER IMAGE PREVIEW
+  // ===============================
+
+  let imageHTML = "";
+
+  if (imageFile) {
+
+    const imageURL =
+    URL.createObjectURL(imageFile);
+
+    imageHTML = `
+
+      <img
+        src="${imageURL}"
+        class="preview-image"
+      >
+
+    `;
+
+  }
+
+  // ===============================
+  // SHOW USER MESSAGE
   // ===============================
 
   messages.innerHTML += `
@@ -50,18 +88,22 @@ async function sendMessage() {
 
       </div>
 
+      ${imageHTML}
+
     </div>
 
   `;
-
-  // CLEAR INPUT
-
-  input.value = "";
 
   // AUTO SCROLL
 
   messages.scrollTop =
   messages.scrollHeight;
+
+  // CLEAR INPUTS
+
+  input.value = "";
+
+  imageInput.value = "";
 
   // ===============================
   // LOADING MESSAGE
@@ -70,7 +112,7 @@ async function sendMessage() {
   messages.innerHTML += `
 
     <div
-      class="message bot-message"
+      class="message bot-message ai-message"
       id="loading"
     >
 
@@ -98,67 +140,37 @@ async function sendMessage() {
   try {
 
     // ===============================
-    // FETCH GROQ API
+    // SEND TO YOUR SERVER
     // ===============================
+
+    const formData =
+    new FormData();
+
+    formData.append(
+      "message",
+      userText
+    );
+
+    if (imageFile) {
+
+      formData.append(
+        "image",
+        imageFile
+      );
+
+    }
 
     const response =
     await fetch(
 
-      "https://api.groq.com/openai/v1/chat/completions",
+      "/chat",
 
       {
-
         method: "POST",
-
-        headers: {
-
-          "Content-Type":
-          "application/json",
-
-          "Authorization":
-          `Bearer ${API_KEY}`
-
-        },
-
-        body: JSON.stringify({
-
-          // MODEL
-
-          model:
-          "llama-3.1-8b-instant",
-
-          // AI ROLE
-
-          messages: [
-
-            {
-              role: "system",
-
-              content:
-              "You are ZEUS AI, a futuristic smart assistant that replies clearly, intelligently and professionally."
-            },
-
-            {
-              role: "user",
-
-              content: userText
-            }
-
-          ],
-
-          temperature: 0.7,
-
-          max_tokens: 1024
-
-        })
-
+        body: formData
       }
 
     );
-
-    // ===============================
-    // GET DATA
-    // ===============================
 
     const data =
     await response.json();
@@ -166,14 +178,14 @@ async function sendMessage() {
     // REMOVE LOADING
 
     document
-      .getElementById("loading")
-      .remove();
+    .getElementById("loading")
+    .remove();
 
     // ===============================
-    // SHOW API ERROR
+    // SHOW SERVER ERROR
     // ===============================
 
-    if (data.error) {
+    if(data.error){
 
       messages.innerHTML += `
 
@@ -187,7 +199,7 @@ async function sendMessage() {
 
           <div class="message-text">
 
-            ${data.error.message} ❌
+            ${data.error}
 
           </div>
 
@@ -196,24 +208,16 @@ async function sendMessage() {
       `;
 
       return;
+
     }
 
     // ===============================
-    // AI REPLY
+    // AI RESPONSE
     // ===============================
-
-    const aiReply =
-
-    data
-    .choices[0]
-    .message
-    .content;
-
-    // SHOW MESSAGE
 
     messages.innerHTML += `
 
-      <div class="message bot-message">
+      <div class="message bot-message ai-message">
 
         <div class="message-label">
 
@@ -223,7 +227,7 @@ async function sendMessage() {
 
         <div class="message-text">
 
-          ${aiReply}
+          ${data.reply}
 
         </div>
 
@@ -242,13 +246,18 @@ async function sendMessage() {
   // CONNECTION ERROR
   // ===============================
 
-  catch (error) {
+  catch(error){
 
     // REMOVE LOADING
 
-    document
-      .getElementById("loading")
-      .remove();
+    const loading =
+    document.getElementById("loading");
+
+    if(loading){
+
+      loading.remove();
+
+    }
 
     // SHOW ERROR
 
@@ -264,7 +273,7 @@ async function sendMessage() {
 
         <div class="message-text">
 
-          Error connecting to Groq ❌
+          Error connecting to server ❌
 
         </div>
 
@@ -282,17 +291,54 @@ async function sendMessage() {
 // ENTER KEY SUPPORT
 // ===============================
 
-document
-.getElementById("user-input")
-.addEventListener(
+input.addEventListener(
 
   "keypress",
 
-  function(e) {
+  function(e){
 
-    if (e.key === "Enter") {
+    if(e.key === "Enter"){
 
       sendMessage();
+
+    }
+
+  }
+
+);
+
+// ===============================
+// BUTTON CLICK
+// ===============================
+
+sendBtn.addEventListener(
+
+  "click",
+
+  function(){
+
+    sendMessage();
+
+  }
+
+);
+
+// ===============================
+// IMAGE PREVIEW NAME
+// ===============================
+
+imageInput.addEventListener(
+
+  "change",
+
+  function(){
+
+    if(imageInput.files[0]){
+
+      console.log(
+        "Image selected:",
+        imageInput.files[0].name
+      );
 
     }
 
