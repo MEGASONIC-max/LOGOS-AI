@@ -138,13 +138,28 @@
 
       <div class="input-area">
 
+        <!-- IMAGE INPUT -->
+
+        <input
+          type="file"
+          id="imageInput"
+          accept="image/*"
+        >
+
+        <!-- TEXT INPUT -->
+
         <input
           type="text"
           id="user-input"
           placeholder="Type your message..."
         >
 
-        <button onclick="sendMessage()">
+        <!-- SEND BUTTON -->
+
+        <button
+          id="send-btn"
+          onclick="sendMessage()"
+        >
 
           ↑
 
