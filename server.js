@@ -1,118 +1,178 @@
 const express = require("express");
 const multer = require("multer");
-const fs = require("fs");
 const path = require("path");
 const dotenv = require("dotenv");
-const OpenAI = require("openai");
 
 dotenv.config();
 
 const app = express();
 
+// ===============================
+// MIDDLEWARE
+// ===============================
+
+app.use(express.json());
+
+app.use(express.static(__dirname));
+
+// ===============================
+// FILE UPLOAD
+// ===============================
+
 const upload = multer({
 dest: "uploads/"
 });
 
-const client = new OpenAI({
-apiKey: process.env.OPENAI_API_KEY
-});
-
-// USE ROOT FOLDER
-app.use(express.static(__dirname));
-
+// ===============================
 // MAIN PAGE
+// ===============================
+
 app.get("/", (req, res) => {
-res.sendFile(path.join(__dirname, "index.html"));
+
+res.sendFile(
+path.join(__dirname, "index.html")
+);
+
 });
 
+// ===============================
 // CHAT ROUTE
-app.post("/chat", upload.single("image"), async (req, res) => {
+// ===============================
+
+app.post(
+"/chat",
+upload.single("image"),
+
+async (req, res) => {
 
 try {
 
-const message = req.body.message || "";
+const userMessage =
+req.body.message || "";
 
-let content = [];
+// ===============================
+// GROQ API REQUEST
+// ===============================
 
-// USER TEXT
-if(message){
-content.push({
-type: "text",
-text: message
-});
-}
+const response = await fetch(
 
-// USER IMAGE
-if(req.file){
+"https://api.groq.com/openai/v1/chat/completions",
 
-const imagePath = req.file.path;
+{
 
-const base64 = fs.readFileSync(imagePath, {
-encoding: "base64"
-});
+method: "POST",
 
-content.push({
-type: "image_url",
-image_url: {
-url: `data:image/jpeg;base64,${base64}`
-}
-});
+headers: {
 
-// DELETE TEMP FILE
-fs.unlinkSync(imagePath);
+"Content-Type":
+"application/json",
 
-}
+"Authorization":
+`Bearer ${process.env.GROQ_API_KEY}`
 
-// SEND TO AI
-const response = await client.chat.completions.create({
+},
 
-model: "gpt-4o-mini",
+body: JSON.stringify({
+
+model:
+"llama-3.1-8b-instant",
 
 messages: [
+
 {
 role: "system",
-content: `
-You are ZEUS AI,
-a smart, friendly,
-advanced AI assistant.
 
-Reply naturally like ChatGPT.
-Be intelligent, conversational,
-helpful and modern.
+content:
+`
+You are ZEUS AI,
+a futuristic,
+intelligent,
+friendly AI assistant.
+
+Reply naturally,
+clearly and helpfully
+like ChatGPT.
 `
 },
+
 {
 role: "user",
-content: content
+content: userMessage
 }
+
 ],
 
-max_tokens: 1000
+temperature: 0.7,
+
+max_tokens: 1024
+
+})
+
+}
+
+);
+
+const data =
+await response.json();
+
+// ===============================
+// ERROR CHECK
+// ===============================
+
+if(data.error){
+
+console.log(data.error);
+
+return res.json({
+
+reply:
+"Groq API Error ❌"
 
 });
 
-// SEND RESPONSE
+}
+
+// ===============================
+// SEND REPLY
+// ===============================
+
 res.json({
-reply: response.choices[0].message.content
+
+reply:
+data.choices[0].message.content
+
 });
 
-} catch (error) {
+}
+
+catch(error){
 
 console.log(error);
 
 res.json({
-reply: "ZEUS AI encountered an error."
+
+reply:
+"ZEUS AI encountered an error."
+
 });
 
 }
 
-});
+}
 
+);
+
+// ===============================
 // PORT
-const PORT = process.env.PORT || 3000;
+// ===============================
+
+const PORT =
+process.env.PORT || 3000;
 
 app.listen(PORT, () => {
 
-console.log(`ZEUS AI running on port ${PORT}`);
+console.log(
+`ZEUS AI running on port ${PORT}`
+);
 
 });
