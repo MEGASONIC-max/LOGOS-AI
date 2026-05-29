@@ -269,7 +269,7 @@ async function sendMessage() {
 
         body: JSON.stringify({
 
-          model: "llama3-70b-8192",
+          model: "llama-3.3-70b-versatile",
 
           messages: [
 
@@ -295,6 +295,12 @@ async function sendMessage() {
       }
 
     );
+
+    if(!response.ok){
+
+      throw new Error("API Error");
+
+    }
 
     const data =
     await response.json();
@@ -370,4 +376,139 @@ async function sendMessage() {
 
       </div>
 
-    `
+    `;
+
+    // AUTO SCROLL
+
+    messages.scrollTop =
+    messages.scrollHeight;
+
+    // ===============================
+    // TYPE RESPONSE
+    // ===============================
+
+    const typingElement =
+    document.getElementById(
+      "typingText"
+    );
+
+    // FIXED MARKDOWN RENDERING
+
+    const formattedReply =
+    marked.parse(aiReply);
+
+    typeText(
+
+      typingElement,
+
+      formattedReply
+
+    );
+
+  }
+
+  // ===============================
+  // CONNECTION ERROR
+  // ===============================
+
+  catch(error){
+
+    // REMOVE LOADING
+
+    const loading =
+    document.getElementById("loading");
+
+    if(loading){
+
+      loading.remove();
+
+    }
+
+    // SHOW ERROR
+
+    messages.innerHTML += `
+
+      <div class="message bot-message">
+
+        <div class="message-label">
+
+          ZEUS AI
+
+        </div>
+
+        <div class="message-text">
+
+          Error connecting to server ❌
+
+        </div>
+
+      </div>
+
+    `;
+
+    saveChat();
+
+    console.log(error);
+
+  }
+
+}
+
+// ===============================
+// ENTER KEY SUPPORT
+// ===============================
+
+input.addEventListener(
+
+  "keypress",
+
+  function(e){
+
+    if(e.key === "Enter"){
+
+      sendMessage();
+
+    }
+
+  }
+
+);
+
+// ===============================
+// BUTTON CLICK
+// ===============================
+
+sendBtn.addEventListener(
+
+  "click",
+
+  function(){
+
+    sendMessage();
+
+  }
+
+);
+
+// ===============================
+// IMAGE PREVIEW NAME
+// ===============================
+
+imageInput.addEventListener(
+
+  "change",
+
+  function(){
+
+    if(imageInput.files[0]){
+
+      console.log(
+        "Image selected:",
+        imageInput.files[0].name
+      );
+
+    }
+
+  }
+
+);
