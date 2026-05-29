@@ -101,6 +101,8 @@ function typeText(element, text){
 
       }
 
+      // AUTO SCROLL FIX
+
       messages.scrollTop =
       messages.scrollHeight;
 
@@ -276,7 +278,7 @@ async function sendMessage() {
             {
               role: "system",
               content:
-              "You are ZEUS AI, a smart and futuristic AI assistant."
+              "You are ZEUS AI, a smart and futuristic AI assistant. Keep replies short unless the user asks for detailed explanations."
             },
 
             {
@@ -288,7 +290,7 @@ async function sendMessage() {
 
           temperature: 0.7,
 
-          max_tokens: 2000
+          max_tokens: 120
 
         })
 
@@ -392,10 +394,18 @@ async function sendMessage() {
       "typingText"
     );
 
+    // SHORT REPLY FIX
+
+    const shortReply =
+    aiReply
+    .split(". ")
+    .slice(0,2)
+    .join(". ");
+
     // FIXED MARKDOWN RENDERING
 
     const formattedReply =
-    marked.parse(aiReply);
+    marked.parse(shortReply);
 
     typeText(
 
@@ -404,6 +414,22 @@ async function sendMessage() {
       formattedReply
 
     );
+
+    // EXTRA AUTO SCROLL FIX
+
+    const autoScroll =
+    setInterval(() => {
+
+      messages.scrollTop =
+      messages.scrollHeight;
+
+    }, 50);
+
+    setTimeout(() => {
+
+      clearInterval(autoScroll);
+
+    }, 3000);
 
   }
 
