@@ -27,6 +27,79 @@ const sendBtn =
 document.getElementById("send-btn");
 
 // ===============================
+// LOAD CHAT HISTORY
+// ===============================
+
+window.onload = function(){
+
+  const savedChats =
+  localStorage.getItem("zeus_chat");
+
+  if(savedChats){
+
+    messages.innerHTML =
+    savedChats;
+
+    messages.scrollTop =
+    messages.scrollHeight;
+
+  }
+
+};
+
+// ===============================
+// SAVE CHAT HISTORY
+// ===============================
+
+function saveChat(){
+
+  localStorage.setItem(
+
+    "zeus_chat",
+
+    messages.innerHTML
+
+  );
+
+}
+
+// ===============================
+// TYPE EFFECT
+// ===============================
+
+function typeText(element, text){
+
+  let index = 0;
+
+  element.innerHTML = "";
+
+  const interval = setInterval(() => {
+
+    if(index < text.length){
+
+      element.innerHTML +=
+      text.charAt(index);
+
+      index++;
+
+      messages.scrollTop =
+      messages.scrollHeight;
+
+    }
+
+    else{
+
+      clearInterval(interval);
+
+      saveChat();
+
+    }
+
+  }, 15);
+
+}
+
+// ===============================
 // SEND MESSAGE
 // ===============================
 
@@ -84,7 +157,7 @@ async function sendMessage() {
 
       <div class="message-text">
 
-        ${userText}
+        ${marked.parse(userText)}
 
       </div>
 
@@ -93,6 +166,10 @@ async function sendMessage() {
     </div>
 
   `;
+
+  // SAVE CHAT
+
+  saveChat();
 
   // AUTO SCROLL
 
@@ -122,9 +199,11 @@ async function sendMessage() {
 
       </div>
 
-      <div class="message-text">
+      <div class="message-text typing-animation">
 
-        Typing...
+        <span></span>
+        <span></span>
+        <span></span>
 
       </div>
 
@@ -207,12 +286,14 @@ async function sendMessage() {
 
       `;
 
+      saveChat();
+
       return;
 
     }
 
     // ===============================
-    // AI RESPONSE
+    // AI RESPONSE CONTAINER
     // ===============================
 
     messages.innerHTML += `
@@ -225,9 +306,10 @@ async function sendMessage() {
 
         </div>
 
-        <div class="message-text">
-
-          ${data.reply}
+        <div
+          class="message-text"
+          id="typingText"
+        >
 
         </div>
 
@@ -239,6 +321,26 @@ async function sendMessage() {
 
     messages.scrollTop =
     messages.scrollHeight;
+
+    // ===============================
+    // TYPE RESPONSE
+    // ===============================
+
+    const typingElement =
+    document.getElementById(
+      "typingText"
+    );
+
+    const formattedReply =
+    marked.parse(data.reply);
+
+    typeText(
+
+      typingElement,
+
+      formattedReply
+
+    );
 
   }
 
@@ -280,6 +382,8 @@ async function sendMessage() {
       </div>
 
     `;
+
+    saveChat();
 
     console.log(error);
 
