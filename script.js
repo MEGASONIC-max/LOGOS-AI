@@ -8,7 +8,7 @@
 // ===============================
 
 const API_KEY =
-"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";
+"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";
 
 // ===============================
 // ELEMENTS
