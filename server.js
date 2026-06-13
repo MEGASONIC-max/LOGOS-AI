@@ -84,10 +84,7 @@ role: "system",
 
 content:
 `
-You are ZEUS AI,
-a futuristic,
-intelligent,
-friendly AI assistant.
+You are LOGOS AI,a fast and powerful assistant ready to help with any tasks.
 
 Reply naturally,
 clearly and helpfully
@@ -172,7 +169,7 @@ process.env.PORT || 3000;
 app.listen(PORT, () => {
 
 console.log(
-`ZEUS AI running on port ${PORT}`
+`LOGOS AI running on port ${PORT}`
 );
 
 });
