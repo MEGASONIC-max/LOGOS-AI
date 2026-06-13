@@ -1,5 +1,5 @@
 // ===============================
-// ZEUS AI CHATBOT
+// LOGOS AI CHATBOT
 // FULL FIXED SCRIPT.JS
 // ===============================
 
@@ -8,7 +8,7 @@
 // ===============================
 
 const API_KEY =
-"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";
+"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";
 
 // ===============================
 // ELEMENTS
@@ -315,7 +315,7 @@ async function sendMessage() {
               role: "system",
 
               content:
-              "You are ZEUS AI, a smart futuristic AI assistant. Keep replies short unless user asks for details."
+              "You are LOGOS-AI , a smart and powerful assistant ready to help with any task."
 
             },
 
