@@ -1,6 +1,6 @@
-# ZEUS Chatbot
+# LOGOS Chatbot
 
-ZEUS Chatbot is a smart AI assistant built to provide fast, intelligent, and human-like conversations. It helps users with instant answers, creative ideas, coding assistance, problem-solving, and productivity tools in a modern chatbot interface.
+LOGOS Chatbot combines vast knowledge with analytical thinking, helping users explore ideas, answer questions, create stories, solve mathematical problems, and develop creative projects. Rather than simply providing information, LOGOS AI aims to explain concepts clearly, adapt to different learning styles, and encourage critical thinking.
 
 ## Features
 
@@ -44,7 +44,7 @@ bash git clone https://github.com/Emmyjosh65/Zeuschatbot-mod.git
 
 ## Author
 
-Developed by Emmyjosh65
+Developed by MEGASONIC-max
 
 ## License
 
