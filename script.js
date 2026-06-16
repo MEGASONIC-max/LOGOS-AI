@@ -33,7 +33,7 @@ document.getElementById("send-btn");
 window.onload = function () {
 
   const savedChats =
-  localStorage.getItem("zeus_chat");
+  localStorage.getItem("logos_chat");
 
   if (savedChats) {
 
@@ -53,7 +53,7 @@ window.onload = function () {
 function saveChat() {
 
   localStorage.setItem(
-    "zeus_chat",
+    "logos_chat",
     messages.innerHTML
   );
 
@@ -239,7 +239,7 @@ async function sendMessage() {
     >
 
       <div class="message-label">
-        ZEUS AI
+        LOGOS AI
       </div>
 
       <div class="message-text typing-animation">
@@ -398,7 +398,7 @@ async function sendMessage() {
     loadingElement.innerHTML = `
 
       <div class="message-label">
-        ZEUS AI
+        LOGOS AI
       </div>
 
       <div
@@ -444,7 +444,7 @@ async function sendMessage() {
       loadingElement.innerHTML = `
 
         <div class="message-label">
-          ZEUS AI
+          LOGOS AI
         </div>
 
         <div class="message-text">
